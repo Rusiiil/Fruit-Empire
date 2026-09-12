@@ -1,0 +1,19 @@
+NAME: Tutorial 1
+
+[MAP]
+#######
+#AA...#
+#AA.BB#
+#...BB#
+#######
+
+[FRUITS]
+A apple red
+B banana yellow
+
+[EXITS]
+red left 1 2
+yellow right 1 2
+
+[REWARD]
+coins 50
