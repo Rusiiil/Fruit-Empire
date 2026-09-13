@@ -1,4 +1,5 @@
 import type { LevelData } from "./LevelData";
+import type { LevelFruit } from "./LevelFruit";
 
 export class LevelParser {
 
@@ -105,8 +106,29 @@ export class LevelParser {
         level: LevelData,
         line: string
     ): void {
+        console.log("Fruit line:", line);
 
-        // Реализуем в следующем спринте
+        const parts = line.split(" ");
+
+        if (parts.length !== 3) {
+
+            console.warn("Invalid fruit:", line);
+
+            return;
+
+        }
+
+        const fruit: LevelFruit = {
+
+            symbol: parts[0],
+
+            id: parts[1],
+
+            color: parts[2]
+
+        };
+
+        level.fruits.push(fruit);
 
     }
 
