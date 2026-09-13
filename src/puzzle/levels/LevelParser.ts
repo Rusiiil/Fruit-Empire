@@ -152,7 +152,7 @@ export class LevelParser {
 
             color: parts[0],
 
-            side: parts[1],
+            side: parts[1] as "left" | "right" | "top" | "bottom",
 
             x: Number(parts[2]),
 
@@ -166,7 +166,7 @@ export class LevelParser {
 
     private parseRewardLine(
         level: LevelData,
-        line: string
+        line: string    
     ): void {
 
         const parts = line.split(/\s+/);

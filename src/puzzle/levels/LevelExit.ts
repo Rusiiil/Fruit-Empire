@@ -2,7 +2,7 @@ export interface LevelExit {
 
     color: string;
 
-    side: "left" | "right" | "top" | "bottom";
+    side: string;
 
     x: number;
 
