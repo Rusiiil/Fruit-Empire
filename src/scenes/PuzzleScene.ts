@@ -1,7 +1,9 @@
 import Phaser from "phaser";
 
+
 import { LevelLoader } from "../puzzle/levels/LevelLoader";
-console.log("HELLO FROM NEW PUZZLE SCENE");
+import { LevelParser } from "../puzzle/levels/LevelParser";
+
 export class PuzzleScene extends Phaser.Scene {
 
     constructor() {
@@ -23,6 +25,12 @@ export class PuzzleScene extends Phaser.Scene {
         console.log("3");
 
         console.log(text);
+
+        const parser = new LevelParser();
+
+        const level = parser.parse(text);
+
+        console.log(level);
 
     }
     catch (error) {
