@@ -1,5 +1,6 @@
 import type { LevelData } from "./LevelData";
 import type { LevelFruit } from "./LevelFruit";
+import type { LevelExit } from "./LevelExit";
 
 export class LevelParser {
 
@@ -108,7 +109,7 @@ export class LevelParser {
     ): void {
         console.log("Fruit line:", line);
 
-        const parts = line.split(" ");
+        const parts = line.split(/\s+/);
 
         if (parts.length !== 3) {
 
@@ -137,7 +138,29 @@ export class LevelParser {
         line: string
     ): void {
 
-        // Реализуем позже
+        const parts = line.split(/\s+/);
+
+        if (parts.length !== 4) {
+
+            console.warn("Invalid exit:", line);
+
+            return;
+
+        }
+
+        const exit: LevelExit = {
+
+            color: parts[0],
+
+            side: parts[1],
+
+            x: Number(parts[2]),
+
+            y: Number(parts[3])
+
+        };
+
+        level.exits.push(exit);
 
     }
 
@@ -146,7 +169,25 @@ export class LevelParser {
         line: string
     ): void {
 
-        // Реализуем позже
+        const parts = line.split(/\s+/);
+
+        if (parts.length !== 2) {
+
+            console.warn("Invalid reward:", line);
+
+            return;
+
+        }
+
+        if (parts[0] !== "coins") {
+
+            console.warn("Unknown reward type:", parts[0]);
+
+            return;
+
+        }
+
+        level.reward = Number(parts[1]);
 
     }
 
