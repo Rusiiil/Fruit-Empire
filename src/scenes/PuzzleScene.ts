@@ -1,102 +1,138 @@
 import Phaser from "phaser";
 
 import { BoardBuilder } from "../puzzle/board/BoardBuilder";
+import type { BoardFruit } from "../puzzle/board/BoardFruit";
+import { TILE_SIZE } from "../puzzle/board/BoardConstants";
 import { LevelLoader } from "../puzzle/levels/LevelLoader";
 import { LevelParser } from "../puzzle/levels/LevelParser";
-import { TEST } from "../puzzle/board/BoardBuilder";
-import { BoardRenderer } from "../puzzle/view/BoardRenderer.ts";
-import { TILE_SIZE } from "../puzzle/board/BoardConstants";
+import { BoardRenderer } from "../puzzle/view/BoardRenderer";
 
-console.log(TEST);
 export class PuzzleScene extends Phaser.Scene {
 
+    private selectedFruit: BoardFruit | null = null;
+
     constructor() {
+
         super("PuzzleScene");
+
     }
 
     async create() {
 
-    try {
+        try {
 
-        console.log("1");
+            const loader = new LevelLoader();
 
-        const loader = new LevelLoader();
+            const text = await loader.load("/levels/level001.txt");
 
-        console.log("2");
+            const parser = new LevelParser();
 
-        const text = await loader.load("/levels/level001.txt");
+            const level = parser.parse(text);
 
-        console.log("3");
+            const builder = new BoardBuilder();
 
-        console.log(text);
+            const board = builder.build(level);
 
-        const parser = new LevelParser();
+            const renderer = new BoardRenderer();
 
-        const level = parser.parse(text);
+            let draggedFruit: BoardFruit | null = null;
 
-        const builder = new BoardBuilder();
+            const redraw = () => {
 
-        const board = builder.build(level);
+                this.children.removeAll();
 
-        this.input.on(
-            "pointerdown",
-            (pointer: Phaser.Input.Pointer) => {
+                renderer.render(
 
-                const x = Math.floor(pointer.x / TILE_SIZE);
-                const y = Math.floor(pointer.y / TILE_SIZE);
+                    this,
 
-                console.log("Cell:", x, y);
+                    board,
 
-                console.log(board.getFruitAt(x, y));
+                    this.selectedFruit
 
-            }
-        );
+                );
 
-        const renderer = new BoardRenderer();
+            };
 
-        renderer.render(this, board);
+            redraw();
 
-        console.log(board);
+            this.input.on(
+                "pointerdown",
 
-        console.log(
+                (pointer: Phaser.Input.Pointer) => {
 
-            board.getFruitAt(1, 1)
+                    const x = Math.floor(pointer.x / TILE_SIZE);
+                    const y = Math.floor(pointer.y / TILE_SIZE);
 
-        );
+                    this.selectedFruit = board.getFruitAt(x, y);
 
-        console.log(
+                    draggedFruit = this.selectedFruit;
 
-            board.getFruitAt(5, 2)
+                    redraw();
 
-        );
+                }
 
-        console.log(
+            );
 
-            board.getFruitAt(0, 0)
+            this.input.on(
 
-        );
+                "pointermove",
 
-        console.log(level);
+                (pointer: Phaser.Input.Pointer) => {
+
+                    if (!draggedFruit) {
+
+                        return;
+
+                    }
+
+                    draggedFruit.sprite?.setPosition(
+
+                        pointer.x,
+
+                        pointer.y
+
+                    );
+
+                }
+
+            );
+
+            this.input.on(
+
+                "pointerup",
+
+                (pointer: Phaser.Input.Pointer) => {
+
+                    if (!draggedFruit) {
+
+                        return;
+
+                    }
+
+                    const x = Math.floor(pointer.x / TILE_SIZE);
+                    const y = Math.floor(pointer.y / TILE_SIZE);
+
+                    draggedFruit.x = x;
+                    draggedFruit.y = y;
+
+                    draggedFruit = null;
+
+                    redraw();
+
+                }
+
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+        this.cameras.main.setBackgroundColor("#6fcf97");
 
     }
-    catch (error) {
-
-        console.error(error);
-
-    }
-
-    this.cameras.main.setBackgroundColor("#6fcf97");
-
-    // this.add.text(
-    //     640,
-    //     360,
-    //     "Puzzle Scene",
-    //     {
-    //         fontSize: "42px",
-    //         color: "#ffffff"
-    //     }
-    // ).setOrigin(0.5);
-
-}
 
 }

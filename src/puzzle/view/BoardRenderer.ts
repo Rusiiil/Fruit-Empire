@@ -2,12 +2,18 @@ import Phaser from "phaser";
 
 import { TILE_SIZE } from "../board/BoardConstants";
 import type { Board } from "../board/Board";
+import type { BoardFruit } from "../board/BoardFruit";
 
 export class BoardRenderer {
 
     public render(
+
         scene: Phaser.Scene,
-        board: Board
+
+        board: Board,
+
+        selectedFruit: BoardFruit | null
+
     ): void {
 
         for (let y = 0; y < board.height; y++) {
@@ -37,9 +43,11 @@ export class BoardRenderer {
                 scene.add.rectangle(
 
                     x * TILE_SIZE + TILE_SIZE / 2,
+
                     y * TILE_SIZE + TILE_SIZE / 2,
 
                     TILE_SIZE,
+
                     TILE_SIZE,
 
                     color
@@ -56,11 +64,9 @@ export class BoardRenderer {
 
                 scene,
 
-                fruit.id,
+                fruit,
 
-                fruit.x,
-
-                fruit.y
+                fruit === selectedFruit
 
             );
 
@@ -69,15 +75,18 @@ export class BoardRenderer {
     }
 
     private drawFruit(
+
         scene: Phaser.Scene,
-        id: string,
-        x: number,
-        y: number
+
+        fruit: BoardFruit,
+
+        selected: boolean
+
     ): void {
 
         let color = 0xffffff;
 
-        switch (id) {
+        switch (fruit.id) {
 
             case "apple":
 
@@ -93,16 +102,31 @@ export class BoardRenderer {
 
         }
 
-        scene.add.circle(
+        const circle = scene.add.circle(
 
-            x * TILE_SIZE + TILE_SIZE / 2,
-            y * TILE_SIZE + TILE_SIZE / 2,
+            fruit.x * TILE_SIZE + TILE_SIZE / 2,
+
+            fruit.y * TILE_SIZE + TILE_SIZE / 2,
 
             TILE_SIZE * 0.30,
 
             color
 
         );
+
+        fruit.sprite = circle;
+
+        if (selected) {
+
+            circle.setStrokeStyle(
+
+                4,
+
+                0xffffff
+
+            );
+
+        }
 
     }
 
