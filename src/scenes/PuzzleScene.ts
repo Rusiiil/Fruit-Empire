@@ -33,6 +33,11 @@ export class PuzzleScene extends Phaser.Scene {
 
             const board = builder.build(level);
 
+            console.log(board.exits);
+
+            console.log("LEVEL EXITS:", level.exits);
+            console.log("BOARD EXITS:", board.exits);   
+
             const renderer = new BoardRenderer();
 
             let draggedFruit: BoardFruit | null = null;
@@ -112,8 +117,12 @@ export class PuzzleScene extends Phaser.Scene {
                     const x = Math.floor(pointer.x / TILE_SIZE);
                     const y = Math.floor(pointer.y / TILE_SIZE);
 
-                    draggedFruit.x = x;
-                    draggedFruit.y = y;
+                    if (board.isFree(x, y)) {
+
+                        draggedFruit.x = x;
+                        draggedFruit.y = y;
+
+                    }
 
                     draggedFruit = null;
 

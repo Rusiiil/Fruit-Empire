@@ -11,6 +11,8 @@ export class BoardBuilder {
 
         const board = new Board(width, height);
 
+        board.exits.push(...level.exits);
+
         for (let y = 0; y < height; y++) {
 
             const row: Tile[] = [];
@@ -64,6 +66,7 @@ export class BoardBuilder {
         return board;
 
     }
+
     private addFruit(
         board: Board,
         level: LevelData,
@@ -105,5 +108,3 @@ export class BoardBuilder {
     }
 
 }
-
-export const TEST = 123;

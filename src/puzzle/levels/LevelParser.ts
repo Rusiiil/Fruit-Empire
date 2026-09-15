@@ -133,34 +133,33 @@ export class LevelParser {
 
     }
 
-    private parseExitLine(
+   private parseExitLine(
         level: LevelData,
         line: string
     ): void {
 
+        console.log("LINE >", line, "<");
+
         const parts = line.split(/\s+/);
 
-        if (parts.length !== 4) {
+        console.log("PARTS >", parts);
 
-            console.warn("Invalid exit:", line);
+        console.log(
+            "color =", parts[0],
+            "side =", parts[1],
+            "index =", parts[2],
+            "Number =", Number(parts[2])
+        );
 
-            return;
-
-        }
-
-        const exit: LevelExit = {
+        level.exits.push({
 
             color: parts[0],
 
             side: parts[1] as "left" | "right" | "top" | "bottom",
 
-            x: Number(parts[2]),
+            index: Number(parts[2])
 
-            y: Number(parts[3])
-
-        };
-
-        level.exits.push(exit);
+        });
 
     }
 

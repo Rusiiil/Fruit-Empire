@@ -12,8 +12,8 @@ A apple red
 B banana yellow
 
 [EXITS]
-red left 1 2
-yellow right 1 2
+red left 2
+yellow right 2
 
 [REWARD]
 coins 50

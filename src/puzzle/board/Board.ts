@@ -1,5 +1,6 @@
 import type { Tile } from "./Tile";
 import type { BoardFruit } from "./BoardFruit";
+import type { LevelExit } from "../levels/LevelExit";
 
 export class Board {
 
@@ -10,6 +11,8 @@ export class Board {
     public readonly tiles: Tile[][];
 
     public readonly fruits: BoardFruit[];
+
+    public readonly exits: LevelExit[];
 
     constructor(
         width: number,
@@ -23,6 +26,8 @@ export class Board {
         this.tiles = [];
 
         this.fruits = [];
+
+        this.exits = [];
 
     }
 
@@ -47,6 +52,50 @@ export class Board {
         }
 
         return null;
+
+    }
+
+    public isInside(
+        x: number,
+        y: number
+    ): boolean {
+
+        return (
+            x >= 0 &&
+            y >= 0 &&
+            x < this.width &&
+            y < this.height
+        );
+
+    }
+
+    public isWall(
+        x: number,
+        y: number
+    ): boolean {
+
+        return this.tiles[y][x].type === "wall";
+
+    }
+
+    public isFree(
+        x: number,
+        y: number
+    ): boolean {
+
+        if (!this.isInside(x, y)) {
+
+            return false;
+
+        }
+
+        if (this.isWall(x, y)) {
+
+            return false;
+
+        }
+
+        return this.getFruitAt(x, y) === null;
 
     }
 

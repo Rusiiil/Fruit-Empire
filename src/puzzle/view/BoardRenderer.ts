@@ -16,6 +16,7 @@ export class BoardRenderer {
 
     ): void {
 
+        // Поле
         for (let y = 0; y < board.height; y++) {
 
             for (let x = 0; x < board.width; x++) {
@@ -58,6 +59,22 @@ export class BoardRenderer {
 
         }
 
+        // Выходы
+        for (const exit of board.exits) {
+
+            this.drawExit(
+
+                scene,
+
+                exit,
+
+                board
+
+            );
+
+        }
+
+        // Фрукты
         for (const fruit of board.fruits) {
 
             this.drawFruit(
@@ -69,6 +86,122 @@ export class BoardRenderer {
                 fruit === selectedFruit
 
             );
+
+        }
+
+    }
+
+    private drawExit(
+
+        scene: Phaser.Scene,
+
+        exit: {
+
+            color: string;
+
+            side: string;
+
+            index: number;
+
+        },
+
+        board: Board
+
+    ): void {
+
+        let color = 0xffffff;
+
+        switch (exit.color) {
+
+            case "red":
+
+                color = 0xff4444;
+                break;
+
+            case "yellow":
+
+                color = 0xffdd33;
+                break;
+
+        }
+
+        const graphics = scene.add.graphics();
+
+        graphics.fillStyle(color);
+
+        switch (exit.side) {
+
+            case "left":
+
+                graphics.fillTriangle(
+
+                    6,
+                    exit.index * TILE_SIZE + TILE_SIZE / 2,
+
+                    22,
+                    exit.index * TILE_SIZE + 16,
+
+                    22,
+                    exit.index * TILE_SIZE + TILE_SIZE - 16
+
+                );
+
+                break;
+
+            case "right":
+                console.log("DRAW RIGHT EXIT", exit);
+
+                graphics.fillTriangle(
+
+                    board.width * TILE_SIZE - 6,
+                    exit.index * TILE_SIZE + TILE_SIZE / 2,
+
+                    board.width * TILE_SIZE - 22,
+                    exit.index * TILE_SIZE + 16,
+
+                    board.width * TILE_SIZE - 22,
+                    exit.index * TILE_SIZE + TILE_SIZE - 16
+
+                );
+
+                break;
+
+            case "top":
+
+                graphics.fillTriangle(
+
+                    exit.index * TILE_SIZE + TILE_SIZE / 2,
+                    6,
+
+                    exit.index * TILE_SIZE + 16,
+                    22,
+
+                    exit.index * TILE_SIZE + TILE_SIZE - 16,
+                    22
+
+                );
+
+                break;
+
+            case "bottom":
+
+                graphics.fillTriangle(
+
+                    exit.index * TILE_SIZE + TILE_SIZE / 2,
+
+                    board.height * TILE_SIZE - 6,
+
+                    exit.index * TILE_SIZE + 16,
+
+                    board.height * TILE_SIZE - 22,
+
+                    exit.index * TILE_SIZE + TILE_SIZE - 16,
+
+                    board.height * TILE_SIZE - 22
+
+                );
+
+                break;
 
         }
 
