@@ -1,4 +1,5 @@
 import type { Tile } from "./Tile";
+import type { BoardFruit } from "./BoardFruit";
 
 export class Board {
 
@@ -7,6 +8,8 @@ export class Board {
     public readonly height: number;
 
     public readonly tiles: Tile[][];
+
+    public readonly fruits: BoardFruit[];
 
     constructor(
         width: number,
@@ -18,6 +21,32 @@ export class Board {
         this.height = height;
 
         this.tiles = [];
+
+        this.fruits = [];
+
+    }
+
+    public getFruitAt(
+        x: number,
+        y: number
+    ) {
+
+        for (const fruit of this.fruits) {
+
+            if (
+
+                fruit.x === x &&
+                fruit.y === y
+
+            ) {
+
+                return fruit;
+
+            }
+
+        }
+
+        return null;
 
     }
 

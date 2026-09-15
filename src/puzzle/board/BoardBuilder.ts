@@ -29,11 +29,27 @@ export class BoardBuilder {
 
                         break;
 
+                    case ".":
+
+                        row.push({
+                            type: "floor"
+                        });
+
+                        break;
+
                     default:
 
                         row.push({
                             type: "floor"
                         });
+
+                        this.addFruit(
+                            board,
+                            level,
+                            symbol,
+                            x,
+                            y
+                        );
 
                         break;
 
@@ -46,6 +62,45 @@ export class BoardBuilder {
         }
 
         return board;
+
+    }
+    private addFruit(
+        board: Board,
+        level: LevelData,
+        symbol: string,
+        x: number,
+        y: number
+    ): void {
+
+        const definition = level.fruits.find(
+
+            fruit => fruit.symbol === symbol
+
+        );
+
+        if (definition === undefined) {
+
+            console.warn(
+
+                `Fruit '${symbol}' not found.`
+
+            );
+
+            return;
+
+        }
+
+        board.fruits.push({
+
+            id: definition.id,
+
+            color: definition.color,
+
+            x: x,
+
+            y: y
+
+        });
 
     }
 
