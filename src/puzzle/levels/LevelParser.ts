@@ -1,6 +1,5 @@
 import type { LevelData } from "./LevelData";
 import type { LevelFruit } from "./LevelFruit";
-import type { LevelExit } from "./LevelExit";
 
 export class LevelParser {
 
@@ -138,18 +137,7 @@ export class LevelParser {
         line: string
     ): void {
 
-        console.log("LINE >", line, "<");
-
         const parts = line.split(/\s+/);
-
-        console.log("PARTS >", parts);
-
-        console.log(
-            "color =", parts[0],
-            "side =", parts[1],
-            "index =", parts[2],
-            "Number =", Number(parts[2])
-        );
 
         level.exits.push({
 

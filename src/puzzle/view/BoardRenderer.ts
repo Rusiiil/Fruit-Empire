@@ -1,6 +1,11 @@
 import Phaser from "phaser";
 
-import { TILE_SIZE } from "../board/BoardConstants";
+import {
+    TILE_SIZE,
+    BOARD_OFFSET_X,
+    BOARD_OFFSET_Y
+} from "../board/BoardConstants";
+
 import type { Board } from "../board/Board";
 import type { BoardFruit } from "../board/BoardFruit";
 
@@ -43,9 +48,9 @@ export class BoardRenderer {
 
                 scene.add.rectangle(
 
-                    x * TILE_SIZE + TILE_SIZE / 2,
+                    BOARD_OFFSET_X + x * TILE_SIZE + TILE_SIZE / 2,
 
-                    y * TILE_SIZE + TILE_SIZE / 2,
+                    BOARD_OFFSET_Y + y * TILE_SIZE + TILE_SIZE / 2,
 
                     TILE_SIZE,
 
@@ -135,32 +140,37 @@ export class BoardRenderer {
 
                 graphics.fillTriangle(
 
-                    6,
-                    exit.index * TILE_SIZE + TILE_SIZE / 2,
+                    BOARD_OFFSET_X + 6,
 
-                    22,
-                    exit.index * TILE_SIZE + 16,
+                    BOARD_OFFSET_Y + exit.index * TILE_SIZE + TILE_SIZE / 2,
 
-                    22,
-                    exit.index * TILE_SIZE + TILE_SIZE - 16
+                    BOARD_OFFSET_X + 22,
+
+                    BOARD_OFFSET_Y + exit.index * TILE_SIZE + 16,
+
+                    BOARD_OFFSET_X + 22,
+
+                    BOARD_OFFSET_Y + exit.index * TILE_SIZE + TILE_SIZE - 16
 
                 );
 
                 break;
 
             case "right":
-                console.log("DRAW RIGHT EXIT", exit);
 
                 graphics.fillTriangle(
 
-                    board.width * TILE_SIZE - 6,
-                    exit.index * TILE_SIZE + TILE_SIZE / 2,
+                    BOARD_OFFSET_X + board.width * TILE_SIZE - 6,
 
-                    board.width * TILE_SIZE - 22,
-                    exit.index * TILE_SIZE + 16,
+                    BOARD_OFFSET_Y + exit.index * TILE_SIZE + TILE_SIZE / 2,
 
-                    board.width * TILE_SIZE - 22,
-                    exit.index * TILE_SIZE + TILE_SIZE - 16
+                    BOARD_OFFSET_X + board.width * TILE_SIZE - 22,
+
+                    BOARD_OFFSET_Y + exit.index * TILE_SIZE + 16,
+
+                    BOARD_OFFSET_X + board.width * TILE_SIZE - 22,
+
+                    BOARD_OFFSET_Y + exit.index * TILE_SIZE + TILE_SIZE - 16
 
                 );
 
@@ -170,14 +180,17 @@ export class BoardRenderer {
 
                 graphics.fillTriangle(
 
-                    exit.index * TILE_SIZE + TILE_SIZE / 2,
-                    6,
+                    BOARD_OFFSET_X + exit.index * TILE_SIZE + TILE_SIZE / 2,
 
-                    exit.index * TILE_SIZE + 16,
-                    22,
+                    BOARD_OFFSET_Y + 6,
 
-                    exit.index * TILE_SIZE + TILE_SIZE - 16,
-                    22
+                    BOARD_OFFSET_X + exit.index * TILE_SIZE + 16,
+
+                    BOARD_OFFSET_Y + 22,
+
+                    BOARD_OFFSET_X + exit.index * TILE_SIZE + TILE_SIZE - 16,
+
+                    BOARD_OFFSET_Y + 22
 
                 );
 
@@ -187,17 +200,17 @@ export class BoardRenderer {
 
                 graphics.fillTriangle(
 
-                    exit.index * TILE_SIZE + TILE_SIZE / 2,
+                    BOARD_OFFSET_X + exit.index * TILE_SIZE + TILE_SIZE / 2,
 
-                    board.height * TILE_SIZE - 6,
+                    BOARD_OFFSET_Y + board.height * TILE_SIZE - 6,
 
-                    exit.index * TILE_SIZE + 16,
+                    BOARD_OFFSET_X + exit.index * TILE_SIZE + 16,
 
-                    board.height * TILE_SIZE - 22,
+                    BOARD_OFFSET_Y + board.height * TILE_SIZE - 22,
 
-                    exit.index * TILE_SIZE + TILE_SIZE - 16,
+                    BOARD_OFFSET_X + exit.index * TILE_SIZE + TILE_SIZE - 16,
 
-                    board.height * TILE_SIZE - 22
+                    BOARD_OFFSET_Y + board.height * TILE_SIZE - 22
 
                 );
 
@@ -237,9 +250,9 @@ export class BoardRenderer {
 
         const circle = scene.add.circle(
 
-            fruit.x * TILE_SIZE + TILE_SIZE / 2,
+            BOARD_OFFSET_X + fruit.x * TILE_SIZE + TILE_SIZE / 2,
 
-            fruit.y * TILE_SIZE + TILE_SIZE / 2,
+            BOARD_OFFSET_Y + fruit.y * TILE_SIZE + TILE_SIZE / 2,
 
             TILE_SIZE * 0.30,
 
