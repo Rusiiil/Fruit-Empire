@@ -11,6 +11,7 @@ import { LevelLoader } from "../puzzle/levels/LevelLoader";
 import { LevelParser } from "../puzzle/levels/LevelParser";
 import { BoardRenderer } from "../puzzle/view/BoardRenderer";
 import { PathFinder } from "../puzzle/rules/PathFinder";
+import { Board } from "../puzzle/board/Board";
 
 export class PuzzleScene extends Phaser.Scene {
 
@@ -63,6 +64,9 @@ export class PuzzleScene extends Phaser.Scene {
             let startX = 0;
             let startY = 0;
 
+            let lastCellX = -1;
+            let lastCellY = -1;
+
             this.input.on(
 
                 "pointerdown",
@@ -77,7 +81,7 @@ export class PuzzleScene extends Phaser.Scene {
                     (pointer.y - BOARD_OFFSET_Y) / TILE_SIZE
                 );
 
-                    this.selectedFruit = board.getFruitAt(x, y);
+                    this.selectedFruit = board.getFruitCovering(x, y);
 
                     draggedFruit = this.selectedFruit;
 
@@ -85,6 +89,8 @@ export class PuzzleScene extends Phaser.Scene {
 
                         startX = draggedFruit.x;
                         startY = draggedFruit.y;
+                        lastCellX = startX;
+                        lastCellY = startY;
 
                     }
 
@@ -106,13 +112,43 @@ export class PuzzleScene extends Phaser.Scene {
 
                     }
 
-                    draggedFruit.sprite?.setPosition(
+                    const targetX = Math.floor(
+                        (pointer.x - BOARD_OFFSET_X) / TILE_SIZE
+                    );
 
-                        pointer.x,
+                    const targetY = Math.floor(
+                        (pointer.y - BOARD_OFFSET_Y) / TILE_SIZE
+                    );
 
-                        pointer.y
+                    if (
+
+                        targetX === lastCellX &&
+                        targetY === lastCellY
+
+                    ) {
+
+                        return;
+
+                    }
+
+                    lastCellX = targetX;
+                    lastCellY = targetY;
+
+                    this.moveFruit(
+
+                        board,
+
+                        draggedFruit,
+
+                        startX,
+                        startY,
+
+                        targetX,
+                        targetY
 
                     );
+
+                    redraw();
 
                 }
 
@@ -138,20 +174,19 @@ export class PuzzleScene extends Phaser.Scene {
                         (pointer.y - BOARD_OFFSET_Y) / TILE_SIZE
                     );
 
-                    const pathFinder = new PathFinder(board);
+                    this.moveFruit(
 
-                    const result = pathFinder.findLastReachable(
+                        board,
+
+                        draggedFruit,
+
                         startX,
                         startY,
+
                         targetX,
-                        targetY,
-                        draggedFruit
+                        targetY
+
                     );
-
-                    draggedFruit.x = result.x;
-                    draggedFruit.y = result.y;
-
-                    board.tryExit(draggedFruit);
 
                     draggedFruit = null;
 
@@ -170,6 +205,43 @@ export class PuzzleScene extends Phaser.Scene {
         }
 
         this.cameras.main.setBackgroundColor("#6fcf97");
+
+    }
+
+    private moveFruit(
+
+        board: Board,
+
+        fruit: BoardFruit,
+
+        startX: number,
+
+        startY: number,
+
+        targetX: number,
+
+        targetY: number
+
+    ): void {
+
+        const pathFinder = new PathFinder(board);
+
+        const result = pathFinder.findLastReachable(
+
+            startX,
+            startY,
+
+            targetX,
+            targetY,
+
+            fruit
+
+        );
+
+        fruit.x = result.x;
+        fruit.y = result.y;
+
+        board.tryExit(fruit);
 
     }
 

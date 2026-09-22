@@ -99,9 +99,13 @@ export class BoardBuilder {
 
             color: definition.color,
 
-            x: x,
+            x,
 
-            y: y
+            y,
+
+            width: 1,
+
+            height: 1
 
         });
 

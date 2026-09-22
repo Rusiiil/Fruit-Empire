@@ -31,30 +31,6 @@ export class Board {
 
     }
 
-    public getFruitAt(
-        x: number,
-        y: number
-    ) {
-
-        for (const fruit of this.fruits) {
-
-            if (
-
-                fruit.x === x &&
-                fruit.y === y
-
-            ) {
-
-                return fruit;
-
-            }
-
-        }
-
-        return null;
-
-    }
-
     public isInside(
         x: number,
         y: number
@@ -75,27 +51,6 @@ export class Board {
     ): boolean {
 
         return this.tiles[y][x].type === "wall";
-
-    }
-
-    public isFree(
-        x: number,
-        y: number
-    ): boolean {
-
-        if (!this.isInside(x, y)) {
-
-            return false;
-
-        }
-
-        if (this.isWall(x, y)) {
-
-            return false;
-
-        }
-
-        return this.getFruitAt(x, y) === null;
 
     }
 
@@ -267,6 +222,81 @@ export class Board {
         }
 
         return false;
+
+    }
+
+    public canPlace(
+        fruit: BoardFruit,
+        x: number,
+        y: number
+    ): boolean {
+
+        for (let dy = 0; dy < fruit.height; dy++) {
+
+            for (let dx = 0; dx < fruit.width; dx++) {
+
+                const cellX = x + dx;
+                const cellY = y + dy;
+
+                if (!this.isInside(cellX, cellY)) {
+
+                    return false;
+
+                }
+
+                if (this.isWall(cellX, cellY)) {
+
+                    return false;
+
+                }
+
+                const other = this.getFruitCovering(
+                    cellX,
+                    cellY
+                );
+
+                if (
+
+                    other !== null &&
+                    other !== fruit
+
+                ) {
+
+                    return false;
+
+                }
+
+            }
+
+        }
+
+        return true;
+
+    }
+
+    public getFruitCovering(
+        x: number,
+        y: number
+    ): BoardFruit | null {
+
+        for (const fruit of this.fruits) {
+
+            if (
+
+                x >= fruit.x &&
+                x < fruit.x + fruit.width &&
+                y >= fruit.y &&
+                y < fruit.y + fruit.height
+
+            ) {
+
+                return fruit;
+
+            }
+
+        }
+
+        return null;
 
     }
 

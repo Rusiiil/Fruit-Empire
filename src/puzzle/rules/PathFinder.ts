@@ -130,15 +130,18 @@ export class PathFinder {
 
             }
 
-            const fruit = this.board.getFruitAt(
-                nextX,
-                nextY
-            );
-
             if (
 
-                fruit !== null &&
-                fruit !== ignoredFruit
+                ignoredFruit !== null &&
+                !this.board.canPlace(
+
+                    ignoredFruit,
+
+                    nextX,
+
+                    nextY
+
+                )
 
             ) {
 

@@ -1,5 +1,3 @@
-import Phaser from "phaser";
-
 export interface BoardFruit {
 
     id: string;
@@ -9,6 +7,10 @@ export interface BoardFruit {
     x: number;
 
     y: number;
+
+    width: number;
+
+    height: number;
 
     sprite?: Phaser.GameObjects.Arc;
 
