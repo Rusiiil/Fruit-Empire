@@ -17,6 +17,8 @@ export class PuzzleScene extends Phaser.Scene {
 
     private selectedFruit: BoardFruit | null = null;
 
+    private levelCompleted = false;
+
     constructor() {
 
         super("PuzzleScene");
@@ -44,6 +46,12 @@ export class PuzzleScene extends Phaser.Scene {
             let draggedFruit: BoardFruit | null = null;
 
             const redraw = () => {
+
+                if (this.levelCompleted) {
+
+                    return;
+
+                }
 
                 this.children.removeAll();
 
@@ -73,13 +81,19 @@ export class PuzzleScene extends Phaser.Scene {
 
                 (pointer: Phaser.Input.Pointer) => {
 
-                const x = Math.floor(
-                    (pointer.x - BOARD_OFFSET_X) / TILE_SIZE
-                );
+                    if (this.levelCompleted) {
 
-                const y = Math.floor(
-                    (pointer.y - BOARD_OFFSET_Y) / TILE_SIZE
-                );
+                        return;
+
+                    }
+
+                    const x = Math.floor(
+                        (pointer.x - BOARD_OFFSET_X) / TILE_SIZE
+                    );
+
+                    const y = Math.floor(
+                        (pointer.y - BOARD_OFFSET_Y) / TILE_SIZE
+                    );
 
                     this.selectedFruit = board.getFruitCovering(x, y);
 
@@ -105,6 +119,12 @@ export class PuzzleScene extends Phaser.Scene {
                 "pointermove",
 
                 (pointer: Phaser.Input.Pointer) => {
+
+                    if (this.levelCompleted) {
+
+                        return;
+
+                    }
 
                     if (!draggedFruit) {
 
@@ -134,6 +154,9 @@ export class PuzzleScene extends Phaser.Scene {
                     lastCellX = targetX;
                     lastCellY = targetY;
 
+                    const oldX = draggedFruit.x;
+                    const oldY = draggedFruit.y;
+
                     this.moveFruit(
 
                         board,
@@ -148,7 +171,19 @@ export class PuzzleScene extends Phaser.Scene {
 
                     );
 
-                    redraw();
+                    if (
+
+                        draggedFruit.x !== oldX ||
+                        draggedFruit.y !== oldY
+
+                    ) {
+
+                        startX = draggedFruit.x;
+                        startY = draggedFruit.y;
+
+                        redraw();
+
+                    }
 
                 }
 
@@ -158,40 +193,17 @@ export class PuzzleScene extends Phaser.Scene {
 
                 "pointerup",
 
-                (pointer: Phaser.Input.Pointer) => {
+                () => {
 
-                    if (!draggedFruit) {
-
+                    if (this.levelCompleted) {
                         return;
-
                     }
 
-                    const targetX = Math.floor(
-                        (pointer.x - BOARD_OFFSET_X) / TILE_SIZE
-                    );
-
-                    const targetY = Math.floor(
-                        (pointer.y - BOARD_OFFSET_Y) / TILE_SIZE
-                    );
-
-                    this.moveFruit(
-
-                        board,
-
-                        draggedFruit,
-
-                        startX,
-                        startY,
-
-                        targetX,
-                        targetY
-
-                    );
+                    if (!draggedFruit) {
+                        return;
+                    }
 
                     draggedFruit = null;
-
-                    redraw();
-
                 }
 
             );
@@ -242,6 +254,56 @@ export class PuzzleScene extends Phaser.Scene {
         fruit.y = result.y;
 
         board.tryExit(fruit);
+
+        fruit.x = result.x;
+        fruit.y = result.y;
+
+        console.log("После move:", fruit.x, fruit.y);
+
+        const removed = board.tryExit(fruit);
+
+        console.log("Удален:", removed);
+        console.log("Осталось фруктов:", board.fruits.length);
+
+        if (board.isCompleted()) {
+
+            console.log("ПОБЕДА");
+
+            this.completeLevel();
+
+        }
+
+        if (board.isCompleted()) {
+
+            console.log("LEVEL COMPLETE");
+            this.completeLevel();
+        }
+
+    }
+
+    private completeLevel(): void {
+
+        this.levelCompleted = true;
+
+        this.add.text(
+
+            this.cameras.main.centerX,
+
+            this.cameras.main.centerY,
+
+            "LEVEL COMPLETE",
+
+            {
+
+                fontSize: "48px",
+
+                color: "#ffffff"
+
+            }
+
+        ).setOrigin(0.5);
+
+        console.log(this.children.length);
 
     }
 

@@ -299,5 +299,11 @@ export class Board {
         return null;
 
     }
+    
+    public isCompleted(): boolean {
+
+        return this.fruits.length === 0;
+
+    }
 
 }
