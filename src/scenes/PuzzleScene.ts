@@ -17,6 +17,8 @@ export class PuzzleScene extends Phaser.Scene {
 
     private selectedFruit: BoardFruit | null = null;
 
+    private pathFinder!: PathFinder;
+
     private levelCompleted = false;
 
     constructor() {
@@ -40,8 +42,14 @@ export class PuzzleScene extends Phaser.Scene {
             const builder = new BoardBuilder();
 
             const board = builder.build(level);
+
+            this.pathFinder = new PathFinder(board);
+
+            const pathFinder = new PathFinder(board);
             
             const renderer = new BoardRenderer();
+
+            renderer.createLayers(this);
 
             let draggedFruit: BoardFruit | null = null;
 
@@ -52,8 +60,6 @@ export class PuzzleScene extends Phaser.Scene {
                     return;
 
                 }
-
-                this.children.removeAll();
 
                 renderer.render(
 
@@ -236,9 +242,7 @@ export class PuzzleScene extends Phaser.Scene {
 
     ): void {
 
-        const pathFinder = new PathFinder(board);
-
-        const result = pathFinder.findLastReachable(
+        const result = this.pathFinder.findLastReachable(
 
             startX,
             startY,

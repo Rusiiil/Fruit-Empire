@@ -10,6 +10,25 @@ import type { Board } from "../board/Board";
 import type { BoardFruit } from "../board/BoardFruit";
 
 export class BoardRenderer {
+    private boardCreated = false;
+
+    private boardLayer!: Phaser.GameObjects.Container;
+
+    private fruitLayer!: Phaser.GameObjects.Container;
+
+    private uiLayer!: Phaser.GameObjects.Container;
+
+    public createLayers(
+        scene: Phaser.Scene
+    ): void {
+
+        this.boardLayer = scene.add.container();
+
+        this.fruitLayer = scene.add.container();
+
+        this.uiLayer = scene.add.container();
+
+    }
 
     public render(
 
@@ -21,7 +40,40 @@ export class BoardRenderer {
 
     ): void {
 
-        // Поле
+        if (!this.boardCreated) {
+
+            this.drawBoard(scene, board);
+
+            this.boardCreated = true;
+
+        }
+
+        this.fruitLayer.removeAll(true);
+
+        for (const fruit of board.fruits) {
+
+            this.drawFruit(
+
+                scene,
+
+                fruit,
+
+                fruit === selectedFruit
+
+            );
+
+        }
+
+    }
+
+    private drawBoard(
+
+        scene: Phaser.Scene,
+
+        board: Board
+
+    ): void {
+
         for (let y = 0; y < board.height; y++) {
 
             for (let x = 0; x < board.width; x++) {
@@ -46,7 +98,7 @@ export class BoardRenderer {
 
                 }
 
-                scene.add.rectangle(
+                const rectangle = scene.add.rectangle(
 
                     BOARD_OFFSET_X + x * TILE_SIZE + TILE_SIZE / 2,
 
@@ -60,11 +112,14 @@ export class BoardRenderer {
 
                 );
 
+                rectangle.setDepth(0);
+
+                this.boardLayer.add(rectangle);
+
             }
 
         }
 
-        // Выходы
         for (const exit of board.exits) {
 
             this.drawExit(
@@ -74,21 +129,6 @@ export class BoardRenderer {
                 exit,
 
                 board
-
-            );
-
-        }
-
-        // Фрукты
-        for (const fruit of board.fruits) {
-
-            this.drawFruit(
-
-                scene,
-
-                fruit,
-
-                fruit === selectedFruit
 
             );
 
@@ -131,6 +171,10 @@ export class BoardRenderer {
         }
 
         const graphics = scene.add.graphics();
+
+        this.boardLayer.add(graphics);
+
+        graphics.setDepth(5);
 
         graphics.fillStyle(color);
 
@@ -260,7 +304,11 @@ export class BoardRenderer {
 
         );
 
+        this.fruitLayer.add(circle);
+
         fruit.sprite = circle;
+
+        circle.setDepth(10);
 
         if (selected) {
 
