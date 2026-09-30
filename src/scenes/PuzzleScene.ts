@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-
+import { LevelManager } from "../puzzle/levels/LevelManager";
 import { BoardBuilder } from "../puzzle/board/BoardBuilder";
 import type { BoardFruit } from "../puzzle/board/BoardFruit";
 import {
@@ -23,6 +23,8 @@ export class PuzzleScene extends Phaser.Scene {
 
     private boardRenderer!: BoardRenderer;
 
+    private levelManager = new LevelManager();
+
     private levelCompleted = false;
 
     constructor() {
@@ -35,23 +37,7 @@ export class PuzzleScene extends Phaser.Scene {
 
         try {
 
-            const loader = new LevelLoader();
-
-            const text = await loader.load("/levels/level001.txt");
-
-            const parser = new LevelParser();
-
-            const level = parser.parse(text);
-
-            const builder = new BoardBuilder();
-
-            this.board = builder.build(level);
-
-            this.pathFinder = new PathFinder(this.board);
-            
-            this.boardRenderer = new BoardRenderer();
-
-            this.boardRenderer.createLayers(this);
+            await this.loadLevel();
 
             let draggedFruit: BoardFruit | null = null;
 
@@ -74,8 +60,6 @@ export class PuzzleScene extends Phaser.Scene {
                 );
 
             };
-
-            redraw();
 
             let startX = 0;
             let startY = 0;
@@ -226,6 +210,45 @@ export class PuzzleScene extends Phaser.Scene {
 
     }
 
+    private async loadLevel(): Promise<void> {
+
+        const loader = new LevelLoader();
+
+        const text = await loader.load(
+
+            this.levelManager.getCurrentPath()
+
+        );
+
+        console.log(this.levelManager.getCurrentPath());
+            console.log(text);
+
+        const parser = new LevelParser();
+
+        const level = parser.parse(text);
+
+        const builder = new BoardBuilder();
+
+        this.board = builder.build(level);
+
+        this.pathFinder = new PathFinder(this.board);
+
+        this.boardRenderer = new BoardRenderer();
+
+        this.boardRenderer.createLayers(this);
+
+        this.boardRenderer.render(
+
+            this,
+
+            this.board,
+
+            this.selectedFruit
+
+        );
+
+    }
+
     private moveFruit(
 
         board: Board,
@@ -280,7 +303,7 @@ export class PuzzleScene extends Phaser.Scene {
 
     }
 
-    private completeLevel(): void {
+    private async completeLevel(): Promise<void> {
 
         this.levelCompleted = true;
 
@@ -302,7 +325,21 @@ export class PuzzleScene extends Phaser.Scene {
 
         ).setOrigin(0.5);
 
-        console.log(this.children.length);
+                await new Promise<void>((resolve) => {
+
+            this.time.delayedCall(
+
+                1000,
+
+                () => resolve()
+
+            );
+
+        });
+
+        this.levelManager.nextLevel();
+
+        await this.loadLevel();
 
     }
 
@@ -341,13 +378,7 @@ export class PuzzleScene extends Phaser.Scene {
 
             }
 
-            fruit.sprite?.setPosition(
-
-                fruit.pixelX,
-
-                fruit.pixelY
-
-            );
+            this.boardRenderer.updateFruit(fruit);
 
         }
 

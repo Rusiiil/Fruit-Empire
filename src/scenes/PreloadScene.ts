@@ -8,6 +8,22 @@ export class PreloadScene extends Phaser.Scene {
 
     preload() {
 
+        this.load.image(
+
+            "apple",
+
+            "/assets/fruits/apple.png"
+
+        );
+
+        this.load.image(
+
+            "banana",
+
+            "/assets/fruits/banana.png"
+
+        );
+
     }
 
     create() {

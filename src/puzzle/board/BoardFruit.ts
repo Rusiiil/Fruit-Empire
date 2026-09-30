@@ -12,8 +12,6 @@ export interface BoardFruit {
 
     height: number;
 
-    sprite?: Phaser.GameObjects.Arc;
-
     pixelX: number;
 
     pixelY: number;

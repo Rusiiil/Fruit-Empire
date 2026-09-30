@@ -14,11 +14,16 @@ export class BoardRenderer {
 
     private boardCreated = false;
 
+    private fruitSprites = new Map<
+        BoardFruit,
+        Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle
+    >();
+
     private boardLayer!: Phaser.GameObjects.Container;
 
     private fruitLayer!: Phaser.GameObjects.Container;
 
-    private uiLayer!: Phaser.GameObjects.Container;
+    //private uiLayer!: Phaser.GameObjects.Container;
 
     public createLayers(
         scene: Phaser.Scene
@@ -28,7 +33,7 @@ export class BoardRenderer {
 
         this.fruitLayer = scene.add.container();
 
-        this.uiLayer = scene.add.container();
+        //this.uiLayer = scene.add.container();
 
     }
 
@@ -276,15 +281,61 @@ export class BoardRenderer {
 
     ): void {
 
+        const width = fruit.width * TILE_SIZE * 0.8;
+
+        const height = fruit.height * TILE_SIZE * 0.8;
+
+        console.log(
+
+            fruit.id,
+
+            scene.textures.exists(fruit.id)
+
+        );
+
+        const texture = scene.textures.get(fruit.id);
+
+        if (texture.key !== "__MISSING") {
+
+            const image = scene.add.image(
+
+                fruit.pixelX +
+                (fruit.width - 1) * TILE_SIZE / 2,
+
+                fruit.pixelY +
+                (fruit.height - 1) * TILE_SIZE / 2,
+
+                fruit.id
+
+            );
+
+            image.setDisplaySize(
+
+                width,
+
+                height
+
+            );
+
+            image.setDepth(10);
+
+            this.fruitLayer.add(image);
+
+            this.fruitSprites.set(
+
+                fruit,
+
+                image
+
+            );
+
+            return;
+
+        }
+
         let color = 0xffffff;
 
         switch (fruit.id) {
-
-            case "apple":
-
-                color = 0xff4444;
-
-                break;
 
             case "banana":
 
@@ -294,27 +345,37 @@ export class BoardRenderer {
 
         }
 
-        const circle = scene.add.circle(
+        const rectangle = scene.add.rectangle(
 
-            fruit.pixelX,
+            fruit.pixelX +
+            (fruit.width - 1) * TILE_SIZE / 2,
 
-            fruit.pixelY,
+            fruit.pixelY +
+            (fruit.height - 1) * TILE_SIZE / 2,
 
-            TILE_SIZE * 0.30,
+            width,
+
+            height,
 
             color
 
         );
 
-        this.fruitLayer.add(circle);
+        rectangle.setDepth(10);
 
-        fruit.sprite = circle;
+        this.fruitLayer.add(rectangle);
 
-        circle.setDepth(10);
+        this.fruitSprites.set(
+
+            fruit,
+
+            rectangle
+
+        );
 
         if (selected) {
 
-            circle.setStrokeStyle(
+            rectangle.setStrokeStyle(
 
                 4,
 
@@ -330,13 +391,15 @@ export class BoardRenderer {
         fruit: BoardFruit
     ): void {
 
-        if (!fruit.sprite) {
+        const sprite = this.fruitSprites.get(fruit);
+
+        if (!sprite) {
 
             return;
 
         }
 
-        fruit.sprite.setPosition(
+        sprite.setPosition(
 
             fruit.pixelX,
 
@@ -350,9 +413,17 @@ export class BoardRenderer {
         fruit: BoardFruit
     ): void {
 
-        fruit.sprite?.destroy();
+        const sprite = this.fruitSprites.get(fruit);
 
-        fruit.sprite = undefined;
+        if (!sprite) {
+
+            return;
+
+        }
+
+        sprite.destroy();
+
+        this.fruitSprites.delete(fruit);
 
     }
 
