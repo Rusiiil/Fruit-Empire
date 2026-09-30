@@ -19,6 +19,10 @@ export class PuzzleScene extends Phaser.Scene {
 
     private pathFinder!: PathFinder;
 
+    private board!: Board;
+
+    private boardRenderer!: BoardRenderer;
+
     private levelCompleted = false;
 
     constructor() {
@@ -41,15 +45,13 @@ export class PuzzleScene extends Phaser.Scene {
 
             const builder = new BoardBuilder();
 
-            const board = builder.build(level);
+            this.board = builder.build(level);
 
-            this.pathFinder = new PathFinder(board);
-
-            const pathFinder = new PathFinder(board);
+            this.pathFinder = new PathFinder(this.board);
             
-            const renderer = new BoardRenderer();
+            this.boardRenderer = new BoardRenderer();
 
-            renderer.createLayers(this);
+            this.boardRenderer.createLayers(this);
 
             let draggedFruit: BoardFruit | null = null;
 
@@ -61,11 +63,11 @@ export class PuzzleScene extends Phaser.Scene {
 
                 }
 
-                renderer.render(
+                this.boardRenderer.render(
 
                     this,
 
-                    board,
+                    this.board,
 
                     this.selectedFruit
 
@@ -101,7 +103,7 @@ export class PuzzleScene extends Phaser.Scene {
                         (pointer.y - BOARD_OFFSET_Y) / TILE_SIZE
                     );
 
-                    this.selectedFruit = board.getFruitCovering(x, y);
+                    this.selectedFruit = this.board.getFruitCovering(x, y);
 
                     draggedFruit = this.selectedFruit;
 
@@ -165,7 +167,7 @@ export class PuzzleScene extends Phaser.Scene {
 
                     this.moveFruit(
 
-                        board,
+                        this.board,
 
                         draggedFruit,
 
@@ -186,8 +188,6 @@ export class PuzzleScene extends Phaser.Scene {
 
                         startX = draggedFruit.x;
                         startY = draggedFruit.y;
-
-                        redraw();
 
                     }
 
@@ -241,46 +241,41 @@ export class PuzzleScene extends Phaser.Scene {
         targetY: number
 
     ): void {
-
         const result = this.pathFinder.findLastReachable(
-
             startX,
             startY,
-
             targetX,
             targetY,
-
             fruit
-
         );
 
         fruit.x = result.x;
         fruit.y = result.y;
 
-        board.tryExit(fruit);
+        fruit.targetPixelX =
+            BOARD_OFFSET_X +
+            fruit.x * TILE_SIZE +
+            TILE_SIZE / 2;
 
-        fruit.x = result.x;
-        fruit.y = result.y;
+        fruit.targetPixelY =
+            BOARD_OFFSET_Y +
+            fruit.y * TILE_SIZE +
+            TILE_SIZE / 2;
 
-        console.log("После move:", fruit.x, fruit.y);
+        fruit.isMoving = true;
 
         const removed = board.tryExit(fruit);
 
-        console.log("Удален:", removed);
-        console.log("Осталось фруктов:", board.fruits.length);
+        if (removed) {
 
-        if (board.isCompleted()) {
-
-            console.log("ПОБЕДА");
-
-            this.completeLevel();
+            this.boardRenderer.removeFruit(fruit);
 
         }
 
         if (board.isCompleted()) {
 
-            console.log("LEVEL COMPLETE");
             this.completeLevel();
+
         }
 
     }
@@ -308,6 +303,53 @@ export class PuzzleScene extends Phaser.Scene {
         ).setOrigin(0.5);
 
         console.log(this.children.length);
+
+    }
+
+    public update(): void {
+
+            if (!this.board) {
+
+                return;
+
+            }
+
+        for (const fruit of this.board.fruits) {
+
+            if (!fruit.isMoving) {
+
+                continue;
+
+            }
+
+            const speed = 12;
+
+            fruit.pixelX += (fruit.targetPixelX - fruit.pixelX) / speed;
+            fruit.pixelY += (fruit.targetPixelY - fruit.pixelY) / speed;
+
+            if (
+
+                Math.abs(fruit.pixelX - fruit.targetPixelX) < 1 &&
+                Math.abs(fruit.pixelY - fruit.targetPixelY) < 1
+
+            ) {
+
+                fruit.pixelX = fruit.targetPixelX;
+                fruit.pixelY = fruit.targetPixelY;
+
+                fruit.isMoving = false;
+
+            }
+
+            fruit.sprite?.setPosition(
+
+                fruit.pixelX,
+
+                fruit.pixelY
+
+            );
+
+        }
 
     }
 

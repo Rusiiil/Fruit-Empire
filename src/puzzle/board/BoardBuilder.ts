@@ -1,6 +1,11 @@
 import { Board } from "./Board";
 import type { LevelData } from "../levels/LevelData";
 import type { Tile } from "./Tile";
+import {
+    TILE_SIZE,
+    BOARD_OFFSET_X,
+    BOARD_OFFSET_Y
+} from "../board/BoardConstants";
 
 export class BoardBuilder {
 
@@ -105,7 +110,17 @@ export class BoardBuilder {
 
             width: 1,
 
-            height: 1
+            height: 1,
+
+            pixelX: BOARD_OFFSET_X + x * TILE_SIZE + TILE_SIZE / 2,
+
+            pixelY: BOARD_OFFSET_Y + y * TILE_SIZE + TILE_SIZE / 2,
+
+            targetPixelX: BOARD_OFFSET_X + x * TILE_SIZE + TILE_SIZE / 2,
+
+            targetPixelY: BOARD_OFFSET_Y + y * TILE_SIZE + TILE_SIZE / 2,
+
+            isMoving: false,
 
         });
 

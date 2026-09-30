@@ -1,6 +1,11 @@
 import type { Tile } from "./Tile";
 import type { BoardFruit } from "./BoardFruit";
 import type { LevelExit } from "../levels/LevelExit";
+import {
+    TILE_SIZE,
+    BOARD_OFFSET_X,
+    BOARD_OFFSET_Y
+} from "./BoardConstants";
 
 export class Board {
 
@@ -303,6 +308,29 @@ export class Board {
     public isCompleted(): boolean {
 
         return this.fruits.length === 0;
+
+    }
+
+    public moveFruit(
+        fruit: BoardFruit,
+        x: number,
+        y: number
+    ): void {
+
+        fruit.x = x;
+        fruit.y = y;
+
+        fruit.targetPixelX =
+            BOARD_OFFSET_X +
+            x * TILE_SIZE +
+            TILE_SIZE / 2;
+
+        fruit.targetPixelY =
+            BOARD_OFFSET_Y +
+            y * TILE_SIZE +
+            TILE_SIZE / 2;
+
+        fruit.isMoving = true;
 
     }
 

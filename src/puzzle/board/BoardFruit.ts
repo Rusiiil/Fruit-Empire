@@ -14,4 +14,14 @@ export interface BoardFruit {
 
     sprite?: Phaser.GameObjects.Arc;
 
+    pixelX: number;
+
+    pixelY: number;
+
+    targetPixelX: number;
+
+    targetPixelY: number;
+
+    isMoving: boolean;
+
 }

@@ -10,6 +10,8 @@ import type { Board } from "../board/Board";
 import type { BoardFruit } from "../board/BoardFruit";
 
 export class BoardRenderer {
+    private fruitsCreated = false;
+
     private boardCreated = false;
 
     private boardLayer!: Phaser.GameObjects.Container;
@@ -48,19 +50,19 @@ export class BoardRenderer {
 
         }
 
-        this.fruitLayer.removeAll(true);
+        if (!this.fruitsCreated) {
 
-        for (const fruit of board.fruits) {
+            for (const fruit of board.fruits) {
 
-            this.drawFruit(
+                this.drawFruit(
+                    scene,
+                    fruit,
+                    fruit === selectedFruit
+                );
 
-                scene,
+            }
 
-                fruit,
-
-                fruit === selectedFruit
-
-            );
+            this.fruitsCreated = true;
 
         }
 
@@ -294,9 +296,9 @@ export class BoardRenderer {
 
         const circle = scene.add.circle(
 
-            BOARD_OFFSET_X + fruit.x * TILE_SIZE + TILE_SIZE / 2,
+            fruit.pixelX,
 
-            BOARD_OFFSET_Y + fruit.y * TILE_SIZE + TILE_SIZE / 2,
+            fruit.pixelY,
 
             TILE_SIZE * 0.30,
 
@@ -321,6 +323,36 @@ export class BoardRenderer {
             );
 
         }
+
+    }
+
+    public updateFruit(
+        fruit: BoardFruit
+    ): void {
+
+        if (!fruit.sprite) {
+
+            return;
+
+        }
+
+        fruit.sprite.setPosition(
+
+            fruit.pixelX,
+
+            fruit.pixelY
+
+        );
+
+    }
+
+    public removeFruit(
+        fruit: BoardFruit
+    ): void {
+
+        fruit.sprite?.destroy();
+
+        fruit.sprite = undefined;
 
     }
 
