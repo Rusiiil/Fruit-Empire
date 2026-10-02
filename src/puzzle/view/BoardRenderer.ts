@@ -74,73 +74,131 @@ export class BoardRenderer {
     }
 
     private drawBoard(
-
         scene: Phaser.Scene,
-
         board: Board
-
     ): void {
 
         for (let y = 0; y < board.height; y++) {
-
             for (let x = 0; x < board.width; x++) {
 
                 const tile = board.tiles[y][x];
 
-                let color = 0xffffff;
+                if (tile.type === "floor") {
 
-                switch (tile.type) {
+                    const floor = scene.add.image(
+                        BOARD_OFFSET_X +
+                        x * TILE_SIZE +
+                        TILE_SIZE / 2,
 
-                    case "wall":
+                        BOARD_OFFSET_Y +
+                        y * TILE_SIZE +
+                        TILE_SIZE / 2,
 
-                        color = 0x555555;
+                        "floor"
+                    );
 
-                        break;
+                    floor.setDisplaySize(
+                        TILE_SIZE,
+                        TILE_SIZE
+                    );
 
-                    case "floor":
+                    floor.setDepth(0);
 
-                        color = 0x88cc88;
+                    this.boardLayer.add(floor);
 
-                        break;
-
+                    continue;
                 }
 
-                const rectangle = scene.add.rectangle(
+                if (tile.type === "wall") {
 
-                    BOARD_OFFSET_X + x * TILE_SIZE + TILE_SIZE / 2,
+                    const isTop = y === 0;
+                    const isBottom = y === board.height - 1;
+                    const isLeft = x === 0;
+                    const isRight = x === board.width - 1;
 
-                    BOARD_OFFSET_Y + y * TILE_SIZE + TILE_SIZE / 2,
+                    const pixelX =
+                        BOARD_OFFSET_X +
+                        x * TILE_SIZE +
+                        TILE_SIZE / 2;
 
-                    TILE_SIZE,
+                    const pixelY =
+                        BOARD_OFFSET_Y +
+                        y * TILE_SIZE +
+                        TILE_SIZE / 2;
 
-                    TILE_SIZE,
+                    // Углы
+                    if (
+                        (isTop || isBottom) &&
+                        (isLeft || isRight)
+                    ) {
+                        const edge = scene.add.image(
+                            pixelX,
+                            pixelY,
+                            "wall_edge"
+                        );
 
-                    color
+                        edge.setDisplaySize(
+                            TILE_SIZE,
+                            TILE_SIZE
+                        );
 
-                );
+                        // edge.png = левый верхний угол
+                        if (isTop && isLeft) {
+                            edge.setAngle(0);
+                        }
+                        else if (isTop && isRight) {
+                            edge.setAngle(90);
+                        }
+                        else if (isBottom && isRight) {
+                            edge.setAngle(180);
+                        }
+                        else if (isBottom && isLeft) {
+                            edge.setAngle(270);
+                        }
 
-                rectangle.setDepth(0);
+                        edge.setDepth(1);
 
-                this.boardLayer.add(rectangle);
+                        this.boardLayer.add(edge);
 
+                        continue;
+                    }
+
+                    // Обычный горизонтальный участок стены
+                    const wall = scene.add.image(
+                        pixelX,
+                        pixelY,
+                        "wall_segment"
+                    );
+
+                    wall.setDisplaySize(
+                        TILE_SIZE,
+                        TILE_SIZE
+                    );
+
+                    // Боковые стены
+                    if (!isTop && !isBottom) {
+                        wall.setAngle(270);
+
+                        if (isRight) {
+                            wall.setFlipY(true);
+                        }
+                    }
+
+                    // Нижняя стена
+                    if (isBottom) {
+                        wall.setFlipY(true);
+                    }
+
+                    wall.setDepth(0);
+
+                    this.boardLayer.add(wall);
+                }
             }
-
         }
 
         for (const exit of board.exits) {
-
-            this.drawExit(
-
-                scene,
-
-                exit,
-
-                board
-
-            );
-
+            this.drawExit(scene, exit, board);
         }
-
     }
 
     private drawExit(

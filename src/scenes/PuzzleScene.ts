@@ -206,7 +206,7 @@ export class PuzzleScene extends Phaser.Scene {
 
         }
 
-        this.cameras.main.setBackgroundColor("#6fcf97");
+        this.cameras.main.setBackgroundColor("#f5e6cf");
 
     }
 

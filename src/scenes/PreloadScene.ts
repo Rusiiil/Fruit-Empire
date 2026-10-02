@@ -8,21 +8,41 @@ export class PreloadScene extends Phaser.Scene {
 
     preload() {
 
-        this.load.image(
+        const fruits = [
 
             "apple",
 
-            "/assets/fruits/apple.png"
+            "banana"
 
-        );
+        ];
 
-        this.load.image(
+        for (const fruit of fruits) {
 
-            "banana",
+            this.load.image(
 
-            "/assets/fruits/banana.png"
+                fruit,
 
-        );
+                `/assets/fruits/${fruit}.png`
+
+            );
+
+        }
+
+        const tiles = [
+            "floor",
+            "wall_segment",
+            "wall_edge",
+            "wall"
+        ];
+
+        for (const tile of tiles) {
+
+            this.load.image(
+                tile,
+                `/assets/tiles/${tile}.png`
+            );
+
+        }
 
     }
 
